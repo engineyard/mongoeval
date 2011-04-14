@@ -1,0 +1,43 @@
+== MongoBench
+
+Benchmarking tool for the MongoDB Ruby driver. The goal is to contain functionality to test and time different types of queries in a configurable environment. The main executable, mongobench, can be run with many different flags and invoking a number of tests.
+
+== Installation
+
+You need an accessible installation of MongoDB. It does not have to be running locally as you can specify the hostname and port of the MongoDB instance from the command line.
+
+You will need the mongo gem installed. For optimal performance, make sure to install the mongo_ext gem as well:
+
+  sudo gem install mongo mongo_ext
+  
+No other gem requirements are needed at this time.
+
+== Running
+
+For basic usage, see this:
+
+  mongobench --help
+  
+That will give you a rundown of what options and tests are available to you. An example run would be like this:
+
+  mongobench --threads 20 --max_sleep 0 --time 30 --run simple
+  
+That will run the simple test (a find_one) for 30 seconds, spinning up 20 threads to perform the test, not sleeping at all between requests to the database. 
+
+A neat thing to try is to open another window and run mongosniff to see the traffic as you run the benchmarks. Something like this:
+
+  sudo mongosniff --source NET lo0
+  
+Or whatever interface the traffic will be flowing over.
+
+== Adding tests
+
+Adding your own tests is as easy as adding a new method to the MongoQueries class. It takes the format of:
+
+  def testname_test(id)
+  
+The "id" parameter is the worker thread ID (used for logging). For example, here is the simple test, which just performs a find_one:
+
+  def simple_test(id)
+    document = @collection.find_one()
+  end
